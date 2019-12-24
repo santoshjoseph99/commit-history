@@ -48,28 +48,25 @@ const App: React.FC = () => {
   const [commits, setCommits] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [allLinks, setAllLinks] = React.useState([]);
-  // const [isError, setIsError] = React.useState(false);
-  // const [nextLink, setNextLink] = React.useState('');
-  // const [prevLink, setPrevLink] = React.useState('');
+  const [isError, setIsError] = React.useState(false);
   const [url, setUrl] = React.useState('https://api.github.com/repos/facebook/react/commits');
-  const onPrevClick = React.useCallback(() => {
-    const l = getLink(allLinks, LinkType.prev);
-    setUrl(l);
-  }, [allLinks]);
-  const onNextClick = React.useCallback(() => {
-    const l = getLink(allLinks, LinkType.next);
-    setUrl(l);
-  }, [allLinks]);
+  const onPrevClick = React.useCallback(() => setUrl(getLink(allLinks, LinkType.prev)), [allLinks]);
+  const onNextClick = React.useCallback(() => setUrl(getLink(allLinks, LinkType.next)), [allLinks]);
 
   React.useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
-      const response = await fetch(url);
-      const data = await response.json();
-      const linkHeader = response.headers.get('Link') || '';
-      const links: any = linkHeader.split(',');
-      setAllLinks(links);
-      setCommits(data);
+      setIsError(false);
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        const linkHeader = response.headers.get('Link') || '';
+        const links: any = linkHeader.split(',');
+        setAllLinks(links);
+        setCommits(data);
+      } catch (err) {
+        setIsError(true);
+      }
       setIsLoading(false);
     }
     fetchData();
@@ -77,6 +74,7 @@ const App: React.FC = () => {
 
   return (
     <Container>
+      {isError && <div>Error: Could not retrieve commits...</div>}
       {isLoading && <div>Loading...</div>}
       {!isLoading &&
         <>
