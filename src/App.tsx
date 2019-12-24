@@ -1,71 +1,116 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Table from 'react-bootstrap/Table';
+import Button from 'react-bootstrap/Button';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col';
 
-const useGithubRepoApi = () => {
-
-}
-
-const splitLinks = (links:string): string[] => {
-  return links.split(',');
-}
+// const useGithubRepoApi = () => {
+// }
 
 enum LinkType {
   next = 'next',
-  prev = 'prev'
+  prev = 'prev',
+  first = 'first',
+  last = 'last'
 }
 
-const getLink = (links:string[], linkType:LinkType): string => {
-  for(const l of links) {
+/**
+ * 
+ * @param links example: [
+ *  '<https://api.github.com/repositories/10270250/commits?page=4>; rel="next"', 
+ *  ' <https://api.github.com/repositories/10270250/commits?page=423>; rel="last"', 
+ *  ' <https://api.github.com/repositories/10270250/commits?page=1>; rel="first"', 
+ *  ' <https://api.github.com/repositories/10270250/commits?page=2>; rel="prev"'
+ *  ]
+ * @param linkType 
+ */
+const getLink = (links: string[], linkType: LinkType): string => {
+  for (const l of links) {
     const linkParts = l.split(';');
     const linkTypes = linkParts[1].split('=');
     const relPartIdx = linkTypes[1].indexOf(linkType);
-    if(relPartIdx > -1) {
-      return linkParts[0];
+    if (relPartIdx > -1) {
+      const u1 = linkParts[0].trim().substring(1);
+      return u1.substring(0, u1.length - 1);
     }
   }
   return '';
 }
 
+interface Commit {
+
+}
+
 const App: React.FC = () => {
-  const [commits, setCommits] = React.useState({ commits: [] });
+  const [commits, setCommits] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [isError, setIsError] = React.useState(false);
-  const [nextLink, setNextLink] = React.useState('');
-  const [prevLink, prevNextLink] = React.useState('');
+  const [allLinks, setAllLinks] = React.useState([]);
+  // const [isError, setIsError] = React.useState(false);
+  // const [nextLink, setNextLink] = React.useState('');
+  // const [prevLink, setPrevLink] = React.useState('');
+  const [url, setUrl] = React.useState('https://api.github.com/repos/facebook/react/commits');
+  const onPrevClick = React.useCallback(() => {
+    const l = getLink(allLinks, LinkType.prev);
+    setUrl(l);
+  }, [allLinks]);
+  const onNextClick = React.useCallback(() => {
+    const l = getLink(allLinks, LinkType.next);
+    setUrl(l);
+  }, [allLinks]);
+
   React.useEffect(() => {
     async function fetchData() {
       setIsLoading(true);
-      const response = await fetch('https://api.github.com/repos/facebook/react/commits');
-      const data = await response.json(); 
-      console.log(response.headers.get('Link'));
-      console.log('DATA:', data.length);
+      const response = await fetch(url);
+      const data = await response.json();
       const linkHeader = response.headers.get('Link') || '';
-      const links = splitLinks(linkHeader);
-      console.log(getLink(links, LinkType.next));
-      console.log(getLink(links, LinkType.prev));
+      const links: any = linkHeader.split(',');
+      setAllLinks(links);
       setCommits(data);
       setIsLoading(false);
     }
     fetchData();
-  }, []);
+  }, [url]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container>
+      {isLoading && <div>Loading...</div>}
+      {!isLoading &&
+        <>
+          <Row>
+            <Col><Button disabled={!getLink(allLinks, LinkType.prev)} onClick={onPrevClick}>Prev</Button></Col>
+            <Col><Button disabled={!getLink(allLinks, LinkType.next)} onClick={onNextClick}>Next</Button></Col>
+          </Row>
+          <Row>
+            <Table striped bordered hover>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Message</th>
+                  <th>Author</th>
+                  <th>SHA</th>
+                </tr>
+              </thead>
+              <tbody>
+                {commits.map((commit: any) => {
+                  return (
+                    <tr key={commit.sha}>
+                      <td>{commit.commit.author.date}</td>
+                      <td>{commit.commit.message}</td>
+                      <td>{commit.author && commit.author.login}</td>
+                      <td>{commit.sha}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </Table>
+          </Row>
+        </>
+      }
+    </Container>
   );
 }
 
