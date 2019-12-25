@@ -77,7 +77,6 @@ const App: React.FC = () => {
 
   return (
     <Container>
-      <Image thumbnail={true} height={25} width={25} src="https://avatars0.githubusercontent.com/u/29597?v=4" rounded />
       {isError && <div>Error: Could not retrieve commits...</div>}
       {isLoading && <div>Loading...</div>}
       {!isLoading &&
@@ -100,12 +99,20 @@ const App: React.FC = () => {
               </thead>
               <tbody>
                 {commits.map((commit: any) => {
+                  const d = new Date(commit.commit.author.date);
+                  const initialCommitMsg = commit.commit.message.substring(0, 100);
                   return (
                     <tr key={commit.sha}>
-                      <td>{commit.commit.author.date}</td>
-                      <td>{commit.commit.message}</td>
-                      <td>{commit.author && commit.author.login}</td>
-                      <td>{commit.sha}</td>
+                      <td><span className={'date'}>{d.toLocaleDateString()}</span></td>
+                      <td><span className={'commit'}>{initialCommitMsg}</span></td>
+                      <td>{commit.author && 
+                        <>
+                          {commit.author.avatar_url && 
+                            <Image className={'avatar'} height={20} width={20} src={commit.author.avatar_url} rounded />}
+                          <span className={'author'}>{commit.author.login}</span>
+                        </>}
+                      </td>
+                      <td><span className={'sha'}>{commit.sha.substring(0, 7)}</span></td>
                     </tr>
                   )
                 })}

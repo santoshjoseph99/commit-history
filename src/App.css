@@ -6,6 +6,26 @@
   padding: 25px;
 }
 
+.avatar {
+  margin-right: 5px;
+}
+
+.author {
+  font-size: small;
+}
+
+.sha {
+  font-size: small;
+}
+
+.date {
+  font-size: small;
+}
+
+.commit {
+  font-size: small;
+}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
