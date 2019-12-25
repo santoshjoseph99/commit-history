@@ -23,7 +23,7 @@ const DELAY_TIME = 100;
 const CommitHistoryList: React.FC<CommitHistoryListProps> = (props:CommitHistoryListProps) => {
   const [history, setHistory] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
-  const [allLinks, setAllLinks] = React.useState([]);
+  const [allLinks, setAllLinks] = React.useState<string[]>([]);
   const [isError, setIsError] = React.useState(false);
   const [url, setUrl] = React.useState(`https://api.github.com/repos/${props.owner}/${props.repo}/commits`);
   const onPrevClick = React.useCallback(() => setUrl(getLink(allLinks, LinkType.prev)), [allLinks]);
@@ -39,7 +39,7 @@ const CommitHistoryList: React.FC<CommitHistoryListProps> = (props:CommitHistory
         const response = await fetch(url);
         const data = await response.json();
         const linkHeader = response.headers.get('Link') || '';
-        const links: any = linkHeader.split(',') || [];
+        const links: string[] = linkHeader.split(',') || [];
         setAllLinks(links);
         setHistory(data);
       } catch (err) {
