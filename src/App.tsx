@@ -6,6 +6,7 @@ import Button from 'react-bootstrap/Button';
 import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
+import Image from 'react-bootstrap/Image';
 
 // const useGithubRepoApi = () => {
 // }
@@ -52,6 +53,8 @@ const App: React.FC = () => {
   const [url, setUrl] = React.useState('https://api.github.com/repos/facebook/react/commits');
   const onPrevClick = React.useCallback(() => setUrl(getLink(allLinks, LinkType.prev)), [allLinks]);
   const onNextClick = React.useCallback(() => setUrl(getLink(allLinks, LinkType.next)), [allLinks]);
+  const onFirstClick = React.useCallback(() => setUrl(getLink(allLinks, LinkType.first)), [allLinks]);
+  const onLastClick = React.useCallback(() => setUrl(getLink(allLinks, LinkType.last)), [allLinks]);
 
   React.useEffect(() => {
     async function fetchData() {
@@ -74,13 +77,16 @@ const App: React.FC = () => {
 
   return (
     <Container>
+      <Image thumbnail={true} height={25} width={25} src="https://avatars0.githubusercontent.com/u/29597?v=4" rounded />
       {isError && <div>Error: Could not retrieve commits...</div>}
       {isLoading && <div>Loading...</div>}
       {!isLoading &&
         <>
-          <Row>
+          <Row className={'navGroup'}>
+            <Col><Button disabled={!getLink(allLinks, LinkType.first)} onClick={onFirstClick}>First</Button></Col>
             <Col><Button disabled={!getLink(allLinks, LinkType.prev)} onClick={onPrevClick}>Prev</Button></Col>
             <Col><Button disabled={!getLink(allLinks, LinkType.next)} onClick={onNextClick}>Next</Button></Col>
+            <Col><Button disabled={!getLink(allLinks, LinkType.last)} onClick={onLastClick}>Last</Button></Col>
           </Row>
           <Row>
             <Table striped bordered hover>
