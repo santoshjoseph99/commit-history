@@ -7,6 +7,7 @@ import Container from 'react-bootstrap/Container';
 import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
+import Spinner from 'react-bootstrap/Spinner';
 
 // const useGithubRepoApi = () => {
 // }
@@ -77,50 +78,55 @@ const App: React.FC = () => {
 
   return (
     <Container>
-      {isError && <div>Error: Could not retrieve commits...</div>}
-      {isLoading && <div>Loading...</div>}
-      {!isLoading &&
-        <>
-          <Row className={'navGroup'}>
-            <Col><Button disabled={!getLink(allLinks, LinkType.first)} onClick={onFirstClick}>First</Button></Col>
-            <Col><Button disabled={!getLink(allLinks, LinkType.prev)} onClick={onPrevClick}>Prev</Button></Col>
-            <Col><Button disabled={!getLink(allLinks, LinkType.next)} onClick={onNextClick}>Next</Button></Col>
-            <Col><Button disabled={!getLink(allLinks, LinkType.last)} onClick={onLastClick}>Last</Button></Col>
-          </Row>
-          <Row>
-            <Table striped bordered hover>
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Message</th>
-                  <th>Author</th>
-                  <th>SHA</th>
-                </tr>
-              </thead>
-              <tbody>
-                {commits.map((commit: any) => {
-                  const d = new Date(commit.commit.author.date);
-                  const initialCommitMsg = commit.commit.message.substring(0, 100);
-                  return (
-                    <tr key={commit.sha}>
-                      <td><span className={'date'}>{d.toLocaleDateString()}</span></td>
-                      <td><span className={'commit'}>{initialCommitMsg}</span></td>
-                      <td>{commit.author && 
-                        <>
-                          {commit.author.avatar_url && 
-                            <Image className={'avatar'} height={20} width={20} src={commit.author.avatar_url} rounded />}
-                          <span className={'author'}>{commit.author.login}</span>
-                        </>}
-                      </td>
-                      <td><span className={'sha'}>{commit.sha.substring(0, 7)}</span></td>
-                    </tr>
-                  )
-                })}
-              </tbody>
-            </Table>
-          </Row>
-        </>
-      }
+      {isError && <div className='error'>Error: Could not retrieve commits...</div>}
+      <>
+        <Row className={'navGroup'}>
+          <Col><Button disabled={!getLink(allLinks, LinkType.first)} onClick={onFirstClick}>First</Button></Col>
+          <Col><Button disabled={!getLink(allLinks, LinkType.prev)} onClick={onPrevClick}>Prev</Button></Col>
+          <Col><Button disabled={!getLink(allLinks, LinkType.next)} onClick={onNextClick}>Next</Button></Col>
+          <Col><Button disabled={!getLink(allLinks, LinkType.last)} onClick={onLastClick}>Last</Button></Col>
+        </Row>
+        <Row className={'spinners'}>
+          {isLoading && 
+            <>
+              <Spinner animation="grow" size="sm" />
+              <Spinner animation="grow" size="sm" />
+              <Spinner animation="grow" size="sm" />
+            </>}
+        </Row>
+        <Row>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Message</th>
+                <th>Author</th>
+                <th>SHA</th>
+              </tr>
+            </thead>
+            <tbody>
+              {commits.map((commit: any) => {
+                const d = new Date(commit.commit.author.date);
+                const initialCommitMsg = commit.commit.message.substring(0, 100);
+                return (
+                  <tr key={commit.sha}>
+                    <td><span className={'date'}>{d.toLocaleDateString()}</span></td>
+                    <td><span className={'commit'}>{initialCommitMsg}</span></td>
+                    <td>{commit.author &&
+                      <>
+                        {commit.author.avatar_url &&
+                          <Image className={'avatar'} height={20} width={20} src={commit.author.avatar_url} rounded />}
+                        <span className={'author'}>{commit.author.login}</span>
+                      </>}
+                    </td>
+                    <td><span className={'sha'}>{commit.sha.substring(0, 7)}</span></td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </Table>
+        </Row>
+      </>
     </Container>
   );
 }

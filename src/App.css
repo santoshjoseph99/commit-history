@@ -2,8 +2,18 @@
   text-align: center;
 }
 
+.error {
+
+}
+
 .navGroup {
-  padding: 25px;
+  padding-top: 25px;
+  padding-left: 25px;
+  padding-right: 25px;
+}
+
+.spinners {
+  height: 25px;
 }
 
 .avatar {
