@@ -8,7 +8,8 @@ import Row from 'react-bootstrap/Row';
 import Col from 'react-bootstrap/Col';
 import Image from 'react-bootstrap/Image';
 import Spinner from 'react-bootstrap/Spinner';
-
+import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
+import Tooltip from 'react-bootstrap/Tooltip';
 // const useGithubRepoApi = () => {
 // }
 
@@ -47,7 +48,7 @@ interface Commit {
 }
 
 const App: React.FC = () => {
-  const [commits, setCommits] = React.useState([]);
+  const [history, setHistory] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [allLinks, setAllLinks] = React.useState([]);
   const [isError, setIsError] = React.useState(false);
@@ -67,7 +68,7 @@ const App: React.FC = () => {
         const linkHeader = response.headers.get('Link') || '';
         const links: any = linkHeader.split(',');
         setAllLinks(links);
-        setCommits(data);
+        setHistory(data);
       } catch (err) {
         setIsError(true);
       }
@@ -87,7 +88,7 @@ const App: React.FC = () => {
           <Col><Button disabled={!getLink(allLinks, LinkType.last)} onClick={onLastClick}>Last</Button></Col>
         </Row>
         <Row className={'spinners'}>
-          {isLoading && 
+          {isLoading &&
             <>
               <Spinner animation="grow" size="sm" />
               <Spinner animation="grow" size="sm" />
@@ -105,25 +106,48 @@ const App: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              {commits.map((commit: any) => {
-                const d = new Date(commit.commit.author.date);
-                const initialCommitMsg = commit.commit.message.substring(0, 100);
+              {history.map((x: any) => {
+                const commit = x.commit;
+                const author = x.author;
+                const d = new Date(commit.author.date);
+                const commitMessage = commit.message.substring(0, 100);
+
                 return (
-                  <tr key={commit.sha}>
-                    <td><span className={'date'}>{d.toLocaleDateString()}</span></td>
+                  <tr key={x.sha}>
+                    <td><span className={'date'}>{d.toDateString()}</span></td>
                     <td>
-                      <span className={'commit'}>
-                        {initialCommitMsg}{initialCommitMsg.length === 100 ? <span>...</span> : ''}
-                      </span>
+                      {commitMessage.length === 100 ?
+                        <OverlayTrigger
+                          placement="auto"
+                          delay={{ show: 100, hide: 100 }}
+                          overlay={<Tooltip id={x.sha}>{commit.message}</Tooltip>}
+                        >
+                          <span className={'commit'}>
+                            {commitMessage}<span>...</span>
+                          </span>
+                        </OverlayTrigger>
+                        :
+                        <span className={'commit'}>
+                          {commitMessage}
+                        </span>
+                      }
                     </td>
-                    <td>{commit.author &&
+                    <td>{author &&
                       <>
-                        {commit.author.avatar_url &&
-                          <Image className={'avatar'} height={20} width={20} src={commit.author.avatar_url} rounded />}
-                        <span className={'author'}>{commit.author.login}</span>
+                        {author.avatar_url &&
+                          <Image className={'avatar'} height={20} width={20} src={author.avatar_url} rounded />}
+                        <span className={'author'}>{author.login}</span>
                       </>}
                     </td>
-                    <td><span className={'sha'}>{commit.sha.substring(0, 7)}</span></td>
+                    <td>
+                      <OverlayTrigger
+                        placement="auto"
+                        delay={{ show: 100, hide: 100 }}
+                        overlay={<Tooltip id={x.sha}>{x.sha}</Tooltip>}
+                      >
+                        <span className={'sha'}>{x.sha.substring(0, 7)}</span>
+                      </OverlayTrigger>
+                    </td>
                   </tr>
                 )
               })}
