@@ -111,7 +111,11 @@ const App: React.FC = () => {
                 return (
                   <tr key={commit.sha}>
                     <td><span className={'date'}>{d.toLocaleDateString()}</span></td>
-                    <td><span className={'commit'}>{initialCommitMsg}</span></td>
+                    <td>
+                      <span className={'commit'}>
+                        {initialCommitMsg}{initialCommitMsg.length === 100 ? <span>...</span> : ''}
+                      </span>
+                    </td>
                     <td>{commit.author &&
                       <>
                         {commit.author.avatar_url &&
