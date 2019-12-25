@@ -3,12 +3,11 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import CommitHistoryList from './components/CommitHistoryList';
 
-
 const App: React.FC = () => {
   return (
     <>
-      <CommitHistoryList owner={'facebook'} repo={'react'}/>
       <CommitHistoryList owner={'santoshjoseph99'} repo={'commit-history'}/>
+      <CommitHistoryList owner={'facebook'} repo={'react'}/>
     </>
   );
 }

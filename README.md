@@ -1,5 +1,13 @@
-## MY NOTES
+### MY NOTES
+I didn't want to copy the github interface for commits and mine is simpler in all aspects.  I used create-react-app (latest ReactJS) and bootstrap for styles.  I added 2 examples: my repo and Facebook's React.
 
+The following are things that could still be done:
+  * Functional testing (I like to use [puppeteer](https://github.com/puppeteer/puppeteer) with [jest](https://github.com/smooth-code/jest-puppeteer))
+  * Virtualized lists (For better experience especially in smaller devices and infinite lists)
+  * Using v4 of github API
+  * Adding markup for accessiblity
+
+---
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
