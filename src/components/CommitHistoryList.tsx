@@ -10,6 +10,7 @@ import OverlayTrigger from 'react-bootstrap/OverlayTrigger';
 import Tooltip from 'react-bootstrap/Tooltip';
 import { LinkType } from './utils/LinkType';
 import getLink from './utils/getLink';
+import { CommitData, Commit, Author } from './utils/interfaces';
 
 export interface CommitHistoryListProps {
   owner: string;
@@ -78,9 +79,9 @@ const CommitHistoryList: React.FC<CommitHistoryListProps> = (props:CommitHistory
               </tr>
             </thead>
             <tbody>
-              {history.map((x: any) => {
-                const commit = x.commit;
-                const author = x.author;
+              {history.map((x: CommitData) => {
+                const commit:Commit = x.commit;
+                const author:Author = x.author;
                 const d = new Date(commit.author.date);
                 const commitMessage = commit.message.substring(0, COMMIT_MSG_LENGTH);
 
