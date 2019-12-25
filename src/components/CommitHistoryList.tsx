@@ -16,6 +16,9 @@ export interface CommitHistoryListProps {
   repo: string;
 }
 
+const COMMIT_MSG_LENGTH = 100;
+const DELAY_TIME = 100;
+
 const CommitHistoryList: React.FC<CommitHistoryListProps> = (props:CommitHistoryListProps) => {
   const [history, setHistory] = React.useState([]);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -79,16 +82,16 @@ const CommitHistoryList: React.FC<CommitHistoryListProps> = (props:CommitHistory
                 const commit = x.commit;
                 const author = x.author;
                 const d = new Date(commit.author.date);
-                const commitMessage = commit.message.substring(0, 100);
+                const commitMessage = commit.message.substring(0, COMMIT_MSG_LENGTH);
 
                 return (
                   <tr key={x.sha}>
                     <td><span className={'date'}>{d.toDateString()}</span></td>
                     <td>
-                      {commitMessage.length === 100 ?
+                      {commitMessage.length === COMMIT_MSG_LENGTH ?
                         <OverlayTrigger
                           placement="auto"
-                          delay={{ show: 100, hide: 100 }}
+                          delay={{ show: DELAY_TIME, hide: DELAY_TIME }}
                           overlay={<Tooltip id={x.sha}>{commit.message}</Tooltip>}
                         >
                           <span className={'commit'}>
@@ -111,7 +114,7 @@ const CommitHistoryList: React.FC<CommitHistoryListProps> = (props:CommitHistory
                     <td>
                       <OverlayTrigger
                         placement="auto"
-                        delay={{ show: 100, hide: 100 }}
+                        delay={{ show: DELAY_TIME, hide: DELAY_TIME }}
                         overlay={<Tooltip id={x.sha}>{x.sha}</Tooltip>}
                       >
                         <span className={'sha'}>{x.sha.substring(0, 7)}</span>
