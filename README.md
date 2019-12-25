@@ -5,7 +5,12 @@ The following are things that could still be done:
   * Functional testing (I like to use [puppeteer](https://github.com/puppeteer/puppeteer) with [jest](https://github.com/smooth-code/jest-puppeteer))
   * Virtualized lists (For better experience especially in smaller devices and infinite lists)
   * Using v4 of github API
-  * Adding markup for accessiblity
+  * Testing for accessiblity
+    * Adding more markup for accessiblity
+  * Profiling (using Google's [Lighthouse](https://developers.google.com/web/tools/lighthouse)))
+  * Caching (if perf is a problem)
+    * Server side (would use Node and probably memcache) to cache cache commit history
+    * Client side (using local storage or indexedDB)
 
 ---
 
